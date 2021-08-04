@@ -11,21 +11,13 @@ This repo allows you to launch locally a PrestaShop instance of a shop
 _If you need more information about this installation [visit the official documentation](https://hub.docker.com/r/prestashop/prestashop/)_
 
 ```bash
-# Create network
-$ docker network create prestashop-net
-
-# Launch the service (if you do not have a Apple M1 chips)
 docker-compose up -d
 ```
 
 ### Specific for Apple M1 chips
 
 ```bash
-# Create network
-$ docker network create prestashop-net
-
-# Launch the service (if you do not have a Apple M1 chips)
-docker-compose -f docker-compose.amd64.yml up -d
+docker-compose -f docker-compose.yml -f docker-compose.amd64.yml up -d
 ```
 
 ## Configure the shop

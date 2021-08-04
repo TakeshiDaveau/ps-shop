@@ -2,26 +2,34 @@ version: "3"
 
 services:
   ps-shop-mysql:
-    image: mysql:5.7
+    image: mariadb:10
     container_name: local-mysql-prestashop
-    networks: prestashop-net
+    networks: 
+      - prestashop-net
     environment:
-      - MYSQL_ROOT_PASSWORD=admin
+      - MARIADB_ROOT_PASSWORD=admin
     ports:
       - "3307:3306"
+    volumes: 
+      - ./mysql:/var/lib/mysql
     command: mysqld --default-authentication-plugin=mysql_native_password
 
 
   ps-shop-prestashop:
     image: prestashop/prestashop
     container_name: local-prestashop
-    networks: prestashop-net
-    depends_on:
-        - local-mysql-prestashop
+    networks: 
+      - prestashop-net
+    # depends_on:
+    #   - local-mysql-prestashop
     environment:
-        - DB_SERVER=local-mysql-prestashop
+      - DB_SERVER=local-mysql-prestashop
+    volumes: 
+      - ./html:/var/www/html
     ports:
         - "8082:80"
 
-
+networks:
+  prestashop-net:
+    driver: bridge
 
