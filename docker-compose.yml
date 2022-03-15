@@ -1,35 +1,48 @@
-version: "3"
+version: '3'
 
 services:
   ps-shop-mysql:
     image: mariadb:10
     container_name: local-mysql-prestashop
-    networks: 
-      - prestashop-net
     environment:
       - MARIADB_ROOT_PASSWORD=admin
+      - MARIADB_DATABASE=prestashop
     ports:
-      - "3307:3306"
-    volumes: 
+      - '3307:3306'
+    volumes:
       - ./mysql:/var/lib/mysql
     command: mysqld --default-authentication-plugin=mysql_native_password
-
+    networks:
+      - prestashop-net
 
   ps-shop-prestashop:
     image: prestashop/prestashop
     container_name: local-prestashop
-    networks: 
-      - prestashop-net
-    # depends_on:
-    #   - local-mysql-prestashop
     environment:
       - DB_SERVER=local-mysql-prestashop
-    volumes: 
+      - DB_NAME=prestashop
+      - XDEBUG=yes
+    volumes:
       - ./html:/var/www/html
+      - /Users/tDaveau/Documents/development/rbm-devtools/modules/rbm_example:/var/www/html/modules/rbm_example
     ports:
-        - "8082:80"
+      - '8082:80'
+    networks:
+      - prestashop-net
+    depends_on:
+      - ps-shop-mysql
+
+  ps-shop-phpmyadmin:
+    restart: always
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: local-phpmyadmin-prestashop
+    environment:
+      PMA_HOSTS: local-mysql-prestashop
+    ports:
+      - 9001:80
+    networks:
+      - prestashop-net
 
 networks:
   prestashop-net:
     driver: bridge
-
